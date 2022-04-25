@@ -3,10 +3,6 @@ from fuzzywuzzy import process, fuzz
 
 usage = f"Usage: {pathlib.Path(__file__).name} path_sources [path_sources ...] path_destination"
 
-def sanitize(name:str, end:int=8) -> str:
-	"""Remove the chuff"""
-	return ' '.join(re.split(r"[^a-z0-9]", name.lower()))
-
 def glob_path(path_source:pathlib.Path, extensions:tuple[str]) -> set[pathlib.Path]:
 	"""Return a set ofvalid files in a given path with given extensions"""
 	
