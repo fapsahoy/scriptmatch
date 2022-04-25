@@ -53,10 +53,10 @@ def match_video_to_scripts(path_video:pathlib.Path, paths_scripts:typing.Iterabl
 			#break	# TODO: Allowing other matches for now
 		
 		# czvr skip
-		elif  path_video.stem[:3].isnumeric():
-			continue
+		#elif  path_video.stem[:3].isnumeric():
+		#	continue
 
-		# Do a fuzzy match
+		# Do a fuzzy lil match
 		else:
 			score = fuzz.token_set_ratio(path_video.stem, path_script.stem)
 			if threshold is not None and score < threshold:
@@ -103,7 +103,7 @@ def prompt_for_selection(path_video:pathlib.Path, matches:list[tuple[int, pathli
 		choice = input(f"Your selection? ([1-{num_choices}], [s]kip, [q]uit): ").strip().lower()
 
 		if choice.isnumeric() and int(choice)-1 in range(num_choices):
-			return matches[idx-1][1]
+			return matches[int(choice)-1][1]
 		elif choice.startswith('s'):
 			return None
 		elif choice.startswith('q'):
@@ -129,6 +129,7 @@ def link_video_with_script(path_video:pathlib.Path, path_script:pathlib.Path, pa
 
 
 def main(input_paths:typing.Iterable[str], input_dest:str):
+	"""Find matching video and script pairs, and create hardlinks in another location"""
 
 	# Ehh
 	global success
@@ -168,9 +169,12 @@ def main(input_paths:typing.Iterable[str], input_dest:str):
 #			print(f"No match for{path_video}", file=sys.stderr)
 			continue
 
+		print("")
+
 		# Present the user with some options
 		path_script_selected = prompt_for_selection(path_video, matches)
 		if path_script_selected is None:
+			print("")
 			continue
 
 		# Hardlink the video and script
@@ -198,7 +202,7 @@ if __name__ == "__main__":
 	except KeyboardInterrupt:
 		print(f"\nLeaving early.\n{len(success)} pairs linked; {len(failed)} pairs failed.\n")
 		sys.exit()
-#	except Exception as e:
-#		sys.exit(f"Exiting with error: {e}")
+	except Exception as e:
+		sys.exit(f"Exiting with error: {e}")
 	
 	print(f"\n{len(success)} pairs linked; {len(failed)} pairs failed.\n")
