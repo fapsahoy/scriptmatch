@@ -41,7 +41,7 @@ Additional filename extensions may be added via the script.
 For each video file found at the given source paths:
 1. If the video also exists at the destination path, it will be skipped.
 2. *Exact matches* are discovered.  An exact match is a case where both the script filename is exactly the same as the video, except for the file extensions.
-3. *Fuzzy matches* are discovered.  A fuzzy match uses the `[fuzzywuzzy](https://pypi.org/project/fuzzywuzzy/)` library to identify any script that has a *similar, but not exact* filename, except for the file extension.  The threshold for considering a script filename to be "similar enough" to be considered a potential match can be adjusted in the script.
+3. *Fuzzy matches* are discovered.  A fuzzy match uses the [`fuzzywuzzy`](https://pypi.org/project/fuzzywuzzy/) library to identify any script that has a *similar, but not exact* filename, except for the file extension.  The threshold for considering a script filename to be "similar enough" to be considered a potential match can be adjusted in the script.
 4. If *exact matches* or *fuzzy matches* are found, the user will be prompted to confirm that a potential match is, indeed, a match.
 5. If the user confirms a match, the video and the script will be hardlinked to the destination folder (see: Matched Pairs below).
 
