@@ -1,6 +1,12 @@
 # scriptmatch
 `scriptmatch` is designed to help pair funscripts with their corresponding videos, even if they are not quite named the same.
 
+## Installation
+
+1. Create a python virtual environment (not required, but highly recommended)
+2. Clone the repo
+3. Install the dependencies with `pip -r requirements.txt`
+
 ## General Usage
 Provide one or more paths to files or folders containing source videos and scripts that you would like to pair, followed by a destination path to put the paired videos and scripts.
 
@@ -18,3 +24,19 @@ python scriptmatch.py D:\MySourceVideos1 D:\MySourceScripts1 D:\MoreVideosAndScr
 ```bash
 python scriptmatch.py D:\SomePlace\my_cool_video1.mp4 D:\MyScripts D:\Sorted\
 ```
+
+## A Little More Detail
+### File Types
+Video files are expected to have one of the following filename extensions:
+- `.mp4`
+- `.mkv`
+- `.wmv`
+
+Scripts are expected to have the `.funscript` filename extension.
+
+### Matched Pairs
+Once a matching video and script pair have been identified, the video and script will both be *hardlinked* to the given destination folder.  The hardlinked script will be renamed to match the video's base filename (but using the `.funscript` filename extension).
+
+*Note:* Because hardlinking is used, the destination folder must exist on the same volume as the source files.
+
+*Note:* Because hardlinking is used, the matched pairs will not occupy *additional* space on the volume.
