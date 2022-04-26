@@ -43,7 +43,7 @@ Once a matching video and script pair have been identified, the video and script
 **Example**: The following source files were identified as a match:
 
 - `D:\MySourceVideos\cool_vid_01.mp4`
-- `D:\MySourceVideos\scriptsIfound\cool-vid01-script.funscript
+- `D:\MySourceVideos\scriptsIfound\cool-vid01-script.funscript`
 
 These will be hardlinked to:
 
