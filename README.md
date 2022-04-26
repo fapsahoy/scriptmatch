@@ -32,10 +32,23 @@ Video files are expected to have one of the following filename extensions:
 - `.mkv`
 - `.wmv`
 
-Scripts are expected to have the `.funscript` filename extension.
+Scripts are expected to have one of the following filename extensions:
+- `.funscript`
+
+Additional filename extensions may be added via the script.
 
 ### Matched Pairs
 Once a matching video and script pair have been identified, the video and script will both be *hardlinked* to the given destination folder.  The hardlinked script will be renamed to match the video's base filename (but using the `.funscript` filename extension).
+
+**Example**: The following source files were identified as a match:
+
+- `D:\MySourceVideos\cool_vid_01.mp4`
+- `D:\MySourceVideos\scriptsIfound\cool-vid01-script.funscript
+
+These will be hardlinked to:
+
+- `D:\Destination\cool_vid_01.mp4`
+- `D:\Destination\cool_vid_01.funscript`
 
 *Note:* Because hardlinking is used, the destination folder must exist on the same volume as the source files.
 
