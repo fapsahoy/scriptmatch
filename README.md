@@ -7,8 +7,14 @@
 2. Clone the repo
 3. Install the dependencies with `pip -r requirements.txt`
 
+`scriptmatch` should be compatible with any reasonably recent version of python3, but the *latest* version of python3 should be used, if possible.
+
 ## General Usage
-Provide one or more paths to files or folders containing source videos and scripts that you would like to pair, followed by a destination path to put the paired videos and scripts.
+Provide one or more paths to files or folders containing source videos and scripts that you would like to pair, followed by a destination path to put the paired videos and scripts:
+
+```bash
+python scriptmatch.py path_to_sources [path_to_sources ...] path_to_destination
+```
 
 **Example**: You have a downloads folder at `D:\MyUnsortedVideosAndScripts\` that contains many unsorted files.  You woud like matches placed in `D:\Sorted\`.
 ```bash
