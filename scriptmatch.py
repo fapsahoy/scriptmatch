@@ -1,7 +1,6 @@
-import pathlib, sys, re, typing
-from fuzzywuzzy import process, fuzz
+import pathlib, sys, typing
+from fuzzywuzzy import fuzz
 
-usage = f"Usage: {pathlib.Path(__file__).name} path_sources [path_sources ...] path_destination"
 
 def glob_path(path_source:pathlib.Path, extensions:tuple[str]) -> set[pathlib.Path]:
 	"""Return a set ofvalid files in a given path with given extensions"""
@@ -18,7 +17,6 @@ def glob_path(path_source:pathlib.Path, extensions:tuple[str]) -> set[pathlib.Pa
 	else:
 		#print(f"Skipping {path_source}", file=sys.stderr)
 		return set()
-
 
 def collect_files(path_sources:typing.Iterable[pathlib.Path], ext_videos:tuple[str], ext_scripts:tuple[str]) -> tuple[set[pathlib.Path, pathlib.Path]]:
 	"""Collect videos and scripts"""
@@ -49,8 +47,8 @@ def match_video_to_scripts(path_video:pathlib.Path, paths_scripts:typing.Iterabl
 			#break	# TODO: Allowing other matches for now
 		
 		# czvr skip
-		#elif  path_video.stem[:3].isnumeric():
-		#	continue
+		elif  path_video.stem[:3].isnumeric():
+			continue
 
 		# Do a fuzzy lil match
 		else:
@@ -111,50 +109,47 @@ def link_video_with_script(path_video:pathlib.Path, path_script:pathlib.Path, pa
 	link_video  = pathlib.Path(path_destination, path_video.name)
 	link_script = link_video.with_suffix(path_script.suffix)
 
-	if link_video.exists() or link_script.exists():
-		raise FileExistsError("Video or script already exists in this path")
-
 	# NOTE: pathlib.Path.link_to has been deprecated in favor of hardlink_to in Python 3.10.  I know.
 	# Using link_to() for better compatibility for older Python versions
-	path_video.link_to(link_video)
-	path_script.link_to(link_script)
+	if not link_video.exists():
+		path_video.link_to(link_video)
+	if not link_script.exists():
+		path_script.link_to(link_script)
 
 	# TODO: Cleanup if one link succeeded and the other failed?
 
 	return (link_video, link_script)
 
-
 def main(input_paths:typing.Iterable[str], input_dest:str):
 	"""Find matching video and script pairs, and create hardlinks in another location"""
 
-	# Ehh
+	# TODO: Rethink these globals
 	global success
 	global failed
-
-	counter = 0
 
 	# Validate destination path
 	path_destination = pathlib.Path(input_dest)
 	if not path_destination.is_dir():
-		sys.exit(f"Destination path must be an existing folder.\n{usage}")
+		raise FileNotFoundError(f"Destination path must be an existing folder.")
 	
 	# Collect source paths
 	paths_videos, paths_scripts = collect_files([pathlib.Path(f) for f in input_paths], ext_videos=(".mp4",".mkv",".wmv"), ext_scripts=(".funscript",))
 	print(f"Found {len(paths_videos)} videos and {len(paths_scripts)} scripts to sort through...")
 
 	if not paths_videos or not paths_scripts:
-		return
+		raise FileNotFoundError(f"Both scripts and videos are required.")
 
+	counter = 0
 	total_count = len(paths_videos)
 
+	# Match each video to a script
 	for path_video in paths_videos:
 
 		counter += 1
-
 		print(f"[{counter} of {total_count}] Looking...", end='\r')
 
 		# Skip any videos already in the destination path
-		if pathlib.Path(path_destination, path_video.name).exists():
+		if pathlib.Path(path_destination, path_video.name).exists() and pathlib.Path(path_destination, path_video.name).with_suffix(".funscript").exists():
 #			print(f"Skipping file already matched: {path_video.name}", file=sys.stderr)
 			continue
 
@@ -187,18 +182,19 @@ def main(input_paths:typing.Iterable[str], input_dest:str):
 
 if __name__ == "__main__":
 
+	usage = f"Usage: {pathlib.Path(__file__).name} path_sources [path_sources ...] path_destination"
+
 	success = set()
 	failed  = set()
 
 	if len(sys.argv) < 3:
-		sys.exit(f"Link videos and scripts in `path_sources` together into `path_destination`\n{usage}")
+		sys.exit(f"\nLink videos and scripts in `path_sources` together into `path_destination`\n{usage}")
 
 	try:
 		main(sys.argv[1:-1], sys.argv[-1])
 	except KeyboardInterrupt:
-		print(f"\nLeaving early.\n{len(success)} pairs linked; {len(failed)} pairs failed.\n")
-		sys.exit()
+		print(f"\nLeaving early.")
 	except Exception as e:
-		sys.exit(f"Exiting with error: {e}")
+		sys.exit(f"\nExiting with error: {e}\n{usage}")
 	
 	print(f"\n{len(success)} pairs linked; {len(failed)} pairs failed.\n")
