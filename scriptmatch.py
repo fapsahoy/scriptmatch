@@ -5,16 +5,14 @@ scriptmatch.py
 By n1gg4tr0n1x
 
 Match cool videos with fun scripts based on similar filenames.
-Create hardlinks to a destination folder with corrected filenames.
+Create hardlinks in a destination folder with corrected filenames.
 """
 
 import pathlib, sys, typing
 from fuzzywuzzy import fuzz
 
+# Config
 SIMILARITY_THRESHOLD = 80  # Percent similar based on fuzzywuzzy (recommended: 80%)
-
-
-
 
 def glob_path(path_source:pathlib.Path, extensions:tuple[str]) -> set[pathlib.Path]:
 	"""Return a set ofvalid files in a given path with given extensions"""
